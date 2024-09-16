@@ -25,7 +25,3 @@ module.exports = {
   uploadPhoto
 };
 
-const express = require('express');
-const app = express();
-
-

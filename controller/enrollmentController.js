@@ -116,7 +116,7 @@ const updateEnrollment = catchAsync(async (req, res, next) => {
     state,
     photo,
   } = req.body;
-  const photoURL = req.file ? `${req.protocol}://${req.get('host')}/uploads/photos/${req.file.filename}` : null;
+  // const photoURL = req.file ? `${req.protocol}://${req.get('host')}/uploads/photos/${req.file.filename}` : null;
 
 
   const result = await enrollment.findByPk(id);
@@ -134,9 +134,7 @@ const updateEnrollment = catchAsync(async (req, res, next) => {
   result.country = country;
   result.printStatus = printStatus;
 
-  if (photoURL) {
-    result.photo = photoURL;
-  }
+    result.photo = photo;
   const updatedResult = await result.save();
   
 
