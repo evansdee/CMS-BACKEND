@@ -1,9 +1,10 @@
 const express = require('express');
 const { uploadPhoto } = require('../controller/uploaderController');
+const { authentication } = require('../controller/authController');
 const router = express.Router();
 
 // Route to upload a file
-router.post('/', (req, res) => {
+router.post('/',authentication, (req, res) => {
   uploadPhoto(req, res, (err) => {
     if (err) {
       return res.status(400).json({ error: err.message });

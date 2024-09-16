@@ -11,6 +11,10 @@ const catchAsync = require('./utils/catchAsync')
 const AppError = require('./utils/appError')
 const globalErrorHandler = require('./controller/globalError')
 
+
+// TEST ALL ROTE 
+
+
 const app = express()
 
 app.use(express.json())
