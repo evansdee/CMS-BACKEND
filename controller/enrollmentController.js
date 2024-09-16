@@ -4,73 +4,10 @@ const catchAsync = require("../utils/catchAsync");
 
 const createEnrollment = catchAsync(async (req, res, next) => {
   const body = req.body;
-  const {
-    firstName,
-    middleName,
-    address,
-    bank,
-    amount,
-    status,
-    fullName,
-    certificateNo,
-    isSignature,
-    startDate,
-    endDate,
-    enrollDate,
-    gsm,
-    dob,
-    printStatus,
-    isRenewal,
-    means,
-    meansId,
-    courseName,
-    codeAlt,
-    courseCode,
-    country,
-    state,
-    stateReside,
-    email,
-    gender,
-    lastName,
-    lga,
-    marital,
-    photo,
-  } = body;
 
-  const photoURL = `${req.protocol}://${req.get('host')}/uploads/photos/${req.file.filename}`;
+  // const photoURL = `${req.protocol}://${req.get('host')}/uploads/photos/${req.file.filename}`;
 
-  const newEnrollment = await enrollment.create({
-    firstName,
-    middleName,
-    address,
-    bank,
-    amount,
-    status,
-    fullName,
-    certificateNo,
-    isSignature,
-    startDate,
-    endDate,
-    enrollDate,
-    gsm,
-    dob,
-    printStatus,
-    isRenewal,
-    means,
-    meansId,
-    courseName,
-    codeAlt,
-    courseCode,
-    country,
-    state,
-    stateReside,
-    email,
-    gender,
-    lastName,
-    lga,
-    marital,
-    photo:photoURL,
-  });
+  const newEnrollment = await enrollment.create({ ...body });
 
   return res.status(201).json({
     status: "success",
@@ -102,48 +39,24 @@ const getEnrollmentById = catchAsync(async (req, res, next) => {
 
 const updateEnrollment = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const {
-    firstName,
-    dob,
-    status: stat,
-    certificateNo,
-    isSignature,
-    middleName,
-    lastName,
-    fullName,
-    printStatus,
-    country,
-    state,
-    photo,
-  } = req.body;
-  // const photoURL = req.file ? `${req.protocol}://${req.get('host')}/uploads/photos/${req.file.filename}` : null;
 
+  // const photoURL = req.file ? `${req.protocol}://${req.get('host')}/uploads/photos/${req.file.filename}` : null;
+  const body = req.body;
 
   const result = await enrollment.findByPk(id);
   if (!result) return next(new AppError("Invaid Enrollment Id", 400));
 
-  result.firstName = firstName;
-  result.dob = dob;
-  result.status = stat;
-  result.certificateNo = certificateNo;
-  result.isSignature = isSignature;
-  result.middleName = middleName;
-  result.lastName = lastName;
-  result.fullName = fullName;
-  result.state = state;
-  result.country = country;
-  result.printStatus = printStatus;
+  Object.keys(body).forEach((key) => {
+    result[key] = body[key];
+  });
 
-    result.photo = photo;
   const updatedResult = await result.save();
-  
 
   return res.json({
     status: "success",
-    data: updatedResult
+    data: updatedResult,
   });
 });
-
 
 const deleteEnrollment = catchAsync(async (req, res, next) => {
   const { id } = req.params;
@@ -164,5 +77,5 @@ module.exports = {
   getEnrollment,
   getEnrollmentById,
   updateEnrollment,
-  deleteEnrollment
+  deleteEnrollment,
 };
