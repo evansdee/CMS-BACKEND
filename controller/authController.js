@@ -10,6 +10,7 @@ const generateToken = (payload) => {
   });
 };
 
+// SIGNUP SECTION 
 const signup = catchAsync(async (req, res, next) => {
   const body = req.body;
 
@@ -20,7 +21,6 @@ const signup = catchAsync(async (req, res, next) => {
   const newUser = await user.create({
     role: body.role,
     firstName: body.firstName,
-    lastName: body.lastName,
     email: body.email,
     password: body.password,
     confirmPassword: body.confirmPassword,
@@ -68,4 +68,90 @@ const login = catchAsync(async (req, res, next) => {
     token,
   });
 });
-module.exports = { signup, login };
+
+const authentication = catchAsync(async (req, res, next) => {
+  let idToken = "";
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    idToken = req.headers.authorization.split(" ")[1];
+  }
+
+  if (!idToken) {
+    throw new AppError("please login to get access", 401);
+  }
+
+  const tokenDetals = jwt.verify(idToken, process.env.JWT_PASSKEY);
+  console.log(tokenDetals);
+
+  const freshUser = await user.findByPk(tokenDetals.id);
+
+  if (!freshUser) {
+    return next(new AppError("User no longer exist", 400));
+  }
+
+  req.user = freshUser;
+  return next();
+});
+
+const getCurrentUser = catchAsync(async (req, res, next) => {
+  const user = await req.user; 
+  if (!user) return res.status(401).json({ message: "Unauthorized" });
+
+  res.status(200).json(user);
+});
+
+
+// CHANGE PASSWORD 
+const changePassword = catchAsync(async (req, res, next) => {
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+  const userId = req.user.id; 
+  const activeUser = await user.findByPk(userId);
+  if (!activeUser) {
+    return next(new AppError("User not found", 404));
+  }
+
+  const isMatch = await bcrypt.compare(currentPassword, activeUser.password);
+  if (!isMatch) {
+    return next(new AppError("Current password is incorrect", 400));
+  }
+
+  if (newPassword.length < 8) {
+    return next(new AppError("New password must be at least 6 characters long", 400));
+  }
+
+  if (newPassword !== confirmPassword) {
+    return next(new AppError("New password and confirmation do not match", 400));
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  activeUser.password = hashedPassword;
+  await activeUser.save();
+
+  res.status(200).json({ message: "Password changed successfully" });
+});
+
+const restrictTo = (...role) =>{
+  const checkPermission = (req,res,next)=>{
+    if(!role.includes(req.user.role)){
+      return next(new AppError("You dont have permission to perform this action",403))
+    }
+
+    return next()
+  }
+  return checkPermission
+}
+
+
+
+module.exports = {
+  signup,
+  login,
+  authentication,
+  getCurrentUser,
+  changePassword,
+  restrictTo
+};

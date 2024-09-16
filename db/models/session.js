@@ -14,43 +14,16 @@ module.exports = sequelize.define(
 
     codeAlt: {
       type: DataTypes.STRING
-      ,
-      allowNull:false,
-      validate:{
-        notNull:{
-          msg:'cannot be null'
-        },
-        notEmpty:{
-          msg:"cannot be empty"
-        }
-      }
+      
     },
 
     courseCode: {
       type: DataTypes.STRING
-      ,
-      allowNull:false,
-      validate:{
-        notNull:{
-          msg:'cannot be null'
-        },
-        notEmpty:{
-          msg:"cannot be empty"
-        }
-      }
+   
     },
     courseName: {
       type: DataTypes.STRING
-      ,
-      allowNull:false,
-      validate:{
-        notNull:{
-          msg:'course name cannot be null'
-        },
-        notEmpty:{
-          msg:"course name cannot be empty"
-        }
-      }
+
     },
     endDate: {
       type: DataTypes.STRING
@@ -76,9 +49,7 @@ module.exports = sequelize.define(
       allowNull: false,
       type: DataTypes.DATE,
     },
-    deletedAt: {
-      type: DataTypes.DATE,
-    },
+ 
   },
-  { freezTableName: true, modelName: "sessions", paranoid: true }
+  { freezTableName: true, modelName: "sessions"}
 );

@@ -1,6 +1,11 @@
 require('dotenv').config({path: `${process.cwd()}/.env`})
+const cors = require("cors")
+const path = require('path');
 const express = require('express')
 const authRouter = require('./route/authRoute')
+const sessionRouter = require('./route/sessionRoute')
+const courseRouter = require('./route/courseRoute')
+const enrollmentRouter = require('./route/enrollmentRoute')
 const catchAsync = require('./utils/catchAsync')
 const AppError = require('./utils/appError')
 const globalErrorHandler = require('./controller/globalError')
@@ -8,6 +13,7 @@ const globalErrorHandler = require('./controller/globalError')
 const app = express()
 
 app.use(express.json())
+app.use(cors());
 
 // TO CHECK IF SERVER IS RUNNING 
 // app.get('/',(req,res)=>{
@@ -16,8 +22,15 @@ app.use(express.json())
 //         message:'woohoo restful is working'
 //     })
 // })
+app.use(express.urlencoded({ extended: true }));
+
+// Serve the photos folder as static
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/v1/auth',authRouter)
+app.use('/api/v1/enrollments',enrollmentRouter)
+app.use('/api/v1/sessions',sessionRouter)
+app.use('/api/v1/courses',courseRouter)
 
 app.use("*",catchAsync(async (req,res,next)=>{
    throw new AppError(`cant find the ${req.originalUrl} on this server`,404)

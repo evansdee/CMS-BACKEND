@@ -11,66 +11,6 @@ module.exports = sequelize.define(
       primaryKey: true,
       type: DataTypes.INTEGER,
     },
-
-    codeAlt: {
-      type: DataTypes.STRING
-      ,
-      allowNull:false,
-      validate:{
-        notNull:{
-          msg:'cannot be null'
-        },
-        notEmpty:{
-          msg:"cannot be empty"
-        }
-      }
-    },
-
-    courseCode: {
-      type: DataTypes.STRING
-      ,
-      allowNull:false,
-      validate:{
-        notNull:{
-          msg:'cannot be null'
-        },
-        notEmpty:{
-          msg:"cannot be empty"
-        }
-      }
-    },
-    courseName: {
-      type: DataTypes.STRING
-      ,
-      allowNull:false,
-      validate:{
-        notNull:{
-          msg:'course name cannot be null'
-        },
-        notEmpty:{
-          msg:"course name cannot be empty"
-        }
-      }
-    },
-    count: {
-      type: DataTypes.STRING
-    },
-    isApproved: {
-      type: DataTypes.BOOLEAN,
-      defaultValue:false
-    },
-    newAmount: {
-      type: DataTypes.STRING
-    },
-    renewAmount: {
-      type: DataTypes.STRING
-    },
-    size: {
-      type: DataTypes.STRING,
-    },
-    certImg: {
-      type: DataTypes.STRING,
-    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
@@ -79,9 +19,39 @@ module.exports = sequelize.define(
       allowNull: false,
       type: DataTypes.DATE,
     },
-    deletedAt: {
-      type: DataTypes.DATE,
+  
+    certImg: {
+      type: DataTypes.STRING,
     },
-  },
-  { freezTableName: true, modelName: "courses", paranoid: true }
+    codeAlt: {
+      type: DataTypes.STRING,
+   
+    },
+    count: {
+      type: DataTypes.STRING,
+    },
+    courseCode: {
+      type: DataTypes.STRING,
+   
+    },
+    courseName: {
+      type: DataTypes.STRING,
+     
+    },
+    isApproved: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    newAmount: {
+      type: DataTypes.STRING,
+    },
+    renewAmount: {
+      type: DataTypes.STRING,
+    },
+    size: {
+      type: DataTypes.STRING,
+    },
+  }
+  ,
+  { freezTableName: true, modelName: "courses" }
 );
