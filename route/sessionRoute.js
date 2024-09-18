@@ -3,7 +3,7 @@ const { authentication } = require("../controller/authController");
 
 const router = require("express").Router();
 
-router.route("/").post(authentication,createSession).get(getSession);
+router.route("/").post(authentication,createSession).get(authentication,getSession);
 router.route("/:id").patch(authentication,updateSession).delete(authentication,deleteSession);
 
 module.exports = router;

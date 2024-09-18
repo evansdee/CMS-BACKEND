@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
+const { isTokenBlacklisted, addToBlacklist } = require("./inMemory");
 
 const generateToken = (payload) => {
   return jwt.sign(payload, process.env.JWT_PASSKEY, {
@@ -14,7 +15,7 @@ const generateToken = (payload) => {
 const signup = catchAsync(async (req, res, next) => {
   const body = req.body;
 
-  if (!["admin", "ceo", "madam", "officer", "cert"].includes(body.role)) {
+  if (!["admin", "ceo", "madam", "office", "cert"].includes(body.role)) {
     throw new AppError("Invalid User", 400);
   }
 
@@ -69,6 +70,24 @@ const login = catchAsync(async (req, res, next) => {
   });
 });
 
+// LOGOUT 
+const logout = catchAsync(async (req, res) => {
+  let idToken = "";
+  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+    idToken = req.headers.authorization.split(" ")[1];
+  }
+
+  if (!idToken) {
+    return res.status(400).json({ message: "Token not provided" });
+  }
+
+  addToBlacklist(idToken);
+
+  res.status(200).json({ message: "Logged out successfully" });
+});
+
+
+// AUTHENTICATION 
 const authentication = catchAsync(async (req, res, next) => {
   let idToken = "";
 
@@ -82,6 +101,11 @@ const authentication = catchAsync(async (req, res, next) => {
   if (!idToken) {
     throw new AppError("please login to get access", 401);
   }
+  
+  if (isTokenBlacklisted(idToken)) {
+    return res.status(401).json({ message: "Token is blacklisted" });
+  }
+
 
   const tokenDetals = jwt.verify(idToken, process.env.JWT_PASSKEY);
   console.log(tokenDetals);
@@ -100,7 +124,13 @@ const getCurrentUser = catchAsync(async (req, res, next) => {
   const user = await req.user; 
   if (!user) return res.status(401).json({ message: "Unauthorized" });
 
-  res.status(200).json(user);
+  const userWithAuth = {
+    ...user.toJSON(), // Convert Sequelize model instance to a plain object
+    isAuthenticated: true,     // Add isAuth as a property of the user object
+  };
+
+  // Return the modified user object
+  res.status(200).json(userWithAuth);
 });
 
 
@@ -150,6 +180,7 @@ const restrictTo = (...role) =>{
 module.exports = {
   signup,
   login,
+  logout,
   authentication,
   getCurrentUser,
   changePassword,

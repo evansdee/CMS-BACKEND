@@ -37,7 +37,7 @@ const createEnrollment = catchAsync(async (req, res, next) => {
     photo,
   } = body;
 
-  const photoURL = `${req.protocol}://${req.get('host')}/uploads/photos/${req.file.filename}`;
+  // const photoURL = `${req.protocol}://${req.get('host')}/uploads/photos/${req.file.filename}`;
 
   const newEnrollment = await enrollment.create({
     firstName,
@@ -69,7 +69,7 @@ const createEnrollment = catchAsync(async (req, res, next) => {
     lastName,
     lga,
     marital,
-    photo:photoURL,
+    photo
   });
 
   return res.status(201).json({
@@ -133,8 +133,7 @@ const updateEnrollment = catchAsync(async (req, res, next) => {
   result.state = state;
   result.country = country;
   result.printStatus = printStatus;
-
-    result.photo = photo;
+  result.photo = photo;
   const updatedResult = await result.save();
   
 

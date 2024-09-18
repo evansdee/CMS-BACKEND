@@ -9,8 +9,14 @@ const {
 
 const router = require("express").Router();
 
-router.route("/").post( createEnrollment).get(getEnrollment);
-router.route("/:id").get(getEnrollmentById).patch(updateEnrollment).delete(deleteEnrollment);
+router
+  .route("/")
+  .post(authentication, createEnrollment)
+  .get(authentication, getEnrollment);
+router
+  .route("/:id")
+  .get(authentication, getEnrollmentById)
+  .patch(authentication, updateEnrollment)
+  .delete(authentication, deleteEnrollment);
 
 module.exports = router;
- 

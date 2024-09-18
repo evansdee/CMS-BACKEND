@@ -1,11 +1,23 @@
-const {createCourse, getCourse,updateCourse, getCourseByID} = require("../controller/courseController");
+const {
+  createCourse,
+  getCourse,
+  updateByCourseApproval,
+  updateByCourseCount,
+  getCourseByID,
+  deleteCoure,
+} = require("../controller/courseController");
 const { authentication } = require("../controller/authController");
-
 
 const router = require("express").Router();
 
-router.route("/").post(authentication,createCourse).get(getCourse);
-router.route("/:courseName").get(getCourseByID).patch(authentication,updateCourse)
-// router.route("/:id")
+router.route("/").post(authentication, createCourse).get(authentication,getCourse);
+router
+  .route("/count/:courseName")
+  .patch(authentication, updateByCourseCount)
+  router
+  .route("/:id")
+  .get(getCourseByID)
+  .patch(authentication, updateByCourseApproval)
+  .delete(authentication, deleteCoure);
 
 module.exports = router;
