@@ -72,7 +72,7 @@ module.exports = {
         },
         isSignature: {
           type: Sequelize.BOOLEAN,
-          defaultValue: false,
+          defaultValue: null,
         },
         lastName: {
           type: Sequelize.STRING,
@@ -110,7 +110,7 @@ module.exports = {
         },
         status: {
           type: Sequelize.BOOLEAN,
-          defaultValue: false,
+          defaultValue: null,
         },
       }
       );
