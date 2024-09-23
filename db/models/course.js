@@ -28,7 +28,7 @@ module.exports = sequelize.define(
    
     },
     count: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
     },
     courseCode: {
       type: DataTypes.STRING,

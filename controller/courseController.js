@@ -6,7 +6,7 @@ const createCourse = catchAsync(async (req, res, next) => {
   const body = req.body;
   const {
     size,
-    certiImg,
+    certImg,
     count,
     newAmount,
     renewAmount,
@@ -18,7 +18,7 @@ const createCourse = catchAsync(async (req, res, next) => {
 
   const newCourse = await course.create({
     size,
-    certiImg,
+    certImg,
     count,
     newAmount,
     renewAmount,
@@ -44,9 +44,8 @@ const getCourse = catchAsync(async (req, res, next) => {
 });
 
 const getCourseByID = catchAsync(async (req, res, next) => {
-
-  const {courseName} = req.params
-  const result = await course.findOne({ where: { courseName } });
+  const { id } = req.params;
+  const result = await course.findOne({ where: { id } });
   if (!result) return next(new AppError("Invaid Enrollment Id", 400));
 
   return res.json({
@@ -55,18 +54,17 @@ const getCourseByID = catchAsync(async (req, res, next) => {
   });
 });
 
-const updateCourse = catchAsync(async (req, res, next) => {
-  const {courseName} = req.params
-  const {isApproved,count} = req.body
-  const result = await course.findOne({where:{courseName}});
+const updateByCourseApproval = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { isApproved, count, certImg } = req.body;
+  const result = await course.findOne({ where: { id } });
   if (!result) return next(new AppError("Invaid Course Name", 400));
 
-  console.log(courseName)
+  // result.count = count
+  result.isApproved = isApproved;
+  // result.certImg = certImg
 
-  result.count = count
-  result.isApproved = isApproved
-
-  const updatedResult = await result.save()
+  const updatedResult = await result.save();
 
   return res.json({
     status: "success",
@@ -74,6 +72,43 @@ const updateCourse = catchAsync(async (req, res, next) => {
   });
 });
 
+const updateByCourseCount = catchAsync(async (req, res, next) => {
+  const { courseName } = req.params;
+  const { isApproved, count, certImg } = req.body;
+  const result = await course.findOne({ where: { courseName } });
+  if (!result) return next(new AppError("Invaid Course Name", 400));
 
+  result.count = count;
+  result.isApproved = isApproved;
+  result.certImg = certImg;
 
-module.exports = {createCourse,getCourse,updateCourse,getCourseByID};
+  const updatedResult = await result.save();
+
+  return res.json({
+    status: "success",
+    data: updatedResult,
+  });
+});
+
+const deleteCoure = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const result = await course.findByPk(id);
+
+  if (!result) return next(new AppError("Invaid Course Id", 400));
+
+  await result.destroy();
+
+  return res.json({
+    status: "success",
+    message: "Deleted Successfully",
+  });
+});
+
+module.exports = {
+  createCourse,
+  getCourse,
+  updateByCourseApproval,
+  updateByCourseCount,
+  getCourseByID,
+  deleteCoure,
+};
