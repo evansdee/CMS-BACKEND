@@ -1,9 +1,12 @@
 const user = require("../db/models/user");
+const crypto = require('crypto');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const { isTokenBlacklisted, addToBlacklist } = require("./inMemory");
+const { sendEmailUsingOAuth2 } = require("./otpController");
+
 
 const generateToken = (payload) => {
   return jwt.sign(payload, process.env.JWT_PASSKEY, {
@@ -15,13 +18,12 @@ const generateToken = (payload) => {
 const signup = catchAsync(async (req, res, next) => {
   const body = req.body;
 
-  if (!["admin", "ceo", "madam", "office", "cert"].includes(body.role)) {
+  if (!["admin", "ceo", "ed", "office", "cert"].includes(body.role)) {
     throw new AppError("Invalid User", 400);
   }
 
   const newUser = await user.create({
     role: body.role,
-    firstName: body.firstName,
     email: body.email,
     password: body.password,
     confirmPassword: body.confirmPassword,
@@ -48,7 +50,7 @@ const signup = catchAsync(async (req, res, next) => {
 
 // LOGIN SECTION
 const login = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password ,deviceId } = req.body;
 
   if (!email || !password) {
     return next(new AppError("Wrong email and password", 400));
@@ -63,6 +65,26 @@ const login = catchAsync(async (req, res, next) => {
   const token = generateToken({
     id: result.id,
   });
+
+  if (["ceo", "ed", "admin"].includes(result.role)) {
+    if (!result.recognizedDevices.includes(deviceId)) {
+      // Generate OTP
+      const otp = crypto.randomInt(100000, 999999).toString();
+      result.otp = otp; // Store OTP
+      result.otpExpires = new Date(Date.now() + 2 * 60 * 1000); // Set expiry to 2 minutes from now
+      await result.save();
+
+        // Send OTP via email
+        // await sendEmailUsingOAuth2(result.email, otp);
+
+
+      return res.status(200).json({
+        status: "otp_required",
+        message: "OTP has been sent to your email",
+        token,
+      });
+    }
+  }
 
   return res.json({
     status: "success",

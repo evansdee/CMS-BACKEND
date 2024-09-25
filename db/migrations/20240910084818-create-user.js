@@ -13,11 +13,15 @@ module.exports = {
       role: {
         type: Sequelize.STRING
       },
-      firstName: {
-        type: Sequelize.STRING
+      recognizedDevices: {
+        type: Sequelize.JSONB, 
+        defaultValue: [],
       },
-      lastName: {
-        type: Sequelize.STRING
+      otp: {
+        type: Sequelize.STRING, 
+      },
+      otpExpires: {
+        type: Sequelize.DATE, 
       },
       email: {
         type: Sequelize.STRING,
