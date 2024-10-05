@@ -25,12 +25,16 @@ module.exports = sequelize.define(
         }
       }
     },
-    firstName: {
+    otp: {
       type: DataTypes.STRING,
     
     },
-    lastName: {
-      type: DataTypes.STRING,
+    recognizedDevices: {
+      type: DataTypes.JSON,
+    
+    },
+    otpExpires: {
+      type: DataTypes.DATE,
 
     },
     email: {

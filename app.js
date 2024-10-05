@@ -4,6 +4,7 @@ const path = require('path');
 const express = require('express')
 const fileRouter = require('./route/uploadRoute'); // Update with the correct path
 const authRouter = require('./route/authRoute')
+const paystackRouter = require('./route/paystackRoute')
 const sessionRouter = require('./route/sessionRoute')
 const courseRouter = require('./route/courseRoute')
 const enrollmentRouter = require('./route/enrollmentRoute')
@@ -27,6 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/v1', fileRouter);
+app.use('/api/v1', paystackRouter);
 app.use('/api/v1/auth',authRouter)
 app.use('/api/v1/enrollments',enrollmentRouter)
 app.use('/api/v1/sessions',sessionRouter)

@@ -1,9 +1,12 @@
 const user = require("../db/models/user");
+const crypto = require('crypto');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const { isTokenBlacklisted, addToBlacklist } = require("./inMemory");
+const { sendEmailUsingOAuth2 } = require("./otpController");
+
 
 const generateToken = (payload) => {
   return jwt.sign(payload, process.env.JWT_PASSKEY, {
@@ -15,13 +18,12 @@ const generateToken = (payload) => {
 const signup = catchAsync(async (req, res, next) => {
   const body = req.body;
 
-  if (!["admin", "ceo", "madam", "office", "cert"].includes(body.role)) {
+  if (!["admin", "ceo", "ed", "office", "cert"].includes(body.role)) {
     throw new AppError("Invalid User", 400);
   }
 
   const newUser = await user.create({
     role: body.role,
-    firstName: body.firstName,
     email: body.email,
     password: body.password,
     confirmPassword: body.confirmPassword,
@@ -48,7 +50,7 @@ const signup = catchAsync(async (req, res, next) => {
 
 // LOGIN SECTION
 const login = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password ,deviceId } = req.body;
 
   if (!email || !password) {
     return next(new AppError("Wrong email and password", 400));
@@ -62,7 +64,47 @@ const login = catchAsync(async (req, res, next) => {
 
   const token = generateToken({
     id: result.id,
+
+    // ABOUT TO RU SOME TEST ON THIS 
+    role:result.role
   });
+
+  let recognizedDevices = result.recognizedDevices;
+
+  if (typeof recognizedDevices === 'string') {
+    try {
+      recognizedDevices = JSON.parse(recognizedDevices); // Ensure it's an array
+    } catch (err) {
+      return next(new AppError("Error parsing recognized devices", 500));
+    }
+  }
+
+  if (!Array.isArray(recognizedDevices)) {
+    recognizedDevices = []; // If it's not an array, initialize as an empty array
+  }
+
+
+  if (["ceo", "ed", "admin"].includes(result.role)) {
+    if (!recognizedDevices.includes(deviceId)) {
+      // Generate OTP
+      const updatedDevices = [...recognizedDevices, deviceId]; // Add new deviceId
+      const otp = crypto.randomInt(100000, 999999).toString();
+      result.otp = otp; // Store OTP
+      result.otpExpires = new Date(Date.now() + 2 * 60 * 1000); // Set expiry to 2 minutes from now
+        // result.recognizedDevices = updatedDevices;
+      await result.save();
+
+        // Send OTP via email
+        // await sendEmailUsingOAuth2(result.email, otp);
+
+
+      return res.status(200).json({
+        status: "otp_required",
+        message: "OTP has been sent to your email",
+        token,
+      });
+    }
+  }
 
   return res.json({
     status: "success",
