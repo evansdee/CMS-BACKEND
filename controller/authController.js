@@ -64,14 +64,34 @@ const login = catchAsync(async (req, res, next) => {
 
   const token = generateToken({
     id: result.id,
+
+    // ABOUT TO RU SOME TEST ON THIS 
+    role:result.role
   });
 
+  let recognizedDevices = result.recognizedDevices;
+
+  if (typeof recognizedDevices === 'string') {
+    try {
+      recognizedDevices = JSON.parse(recognizedDevices); // Ensure it's an array
+    } catch (err) {
+      return next(new AppError("Error parsing recognized devices", 500));
+    }
+  }
+
+  if (!Array.isArray(recognizedDevices)) {
+    recognizedDevices = []; // If it's not an array, initialize as an empty array
+  }
+
+
   if (["ceo", "ed", "admin"].includes(result.role)) {
-    if (!result.recognizedDevices.includes(deviceId)) {
+    if (!recognizedDevices.includes(deviceId)) {
       // Generate OTP
+      const updatedDevices = [...recognizedDevices, deviceId]; // Add new deviceId
       const otp = crypto.randomInt(100000, 999999).toString();
       result.otp = otp; // Store OTP
       result.otpExpires = new Date(Date.now() + 2 * 60 * 1000); // Set expiry to 2 minutes from now
+        // result.recognizedDevices = updatedDevices;
       await result.save();
 
         // Send OTP via email
