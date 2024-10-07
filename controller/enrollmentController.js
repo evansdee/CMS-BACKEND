@@ -103,24 +103,34 @@ const getEnrollmentById = catchAsync(async (req, res, next) => {
 const updateEnrollment = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-  // const photoURL = req.file ? `${req.protocol}://${req.get('host')}/uploads/photos/${req.file.filename}` : null;
   const body = req.body;
 
   const result = await enrollment.findByPk(id);
   if (!result) return next(new AppError("Invaid Enrollment Id", 400));
 
-  result.firstName = firstName;
-  result.dob = dob;
-  result.status = stat;
-  result.certificateNo = certificateNo;
-  result.isSignature = isSignature;
-  result.middleName = middleName;
-  result.lastName = lastName;
-  result.fullName = fullName;
-  result.state = state;
-  result.country = country;
-  result.printStatus = printStatus;
-  result.photo = photo;
+  // Dynamically update fields using reduce
+  const updatedData = Object.entries(body).reduce((acc, [key, value]) => {
+    if (result[key] !== undefined) {
+      acc[key] = value; // Only update fields that exist on the result object
+    }
+    return acc;
+  }, {});
+
+  // Assign updated fields to the result
+  Object.assign(result, updatedData);
+  // result.firstName = firstName;
+  // result.dob = dob;
+  // result.status = stat;
+  // result.certificateNo = certificateNo;
+  // result.isSignature = isSignature;
+  // result.middleName = middleName;
+  // result.lastName = lastName;
+  // result.fullName = fullName;
+  // result.state = state;
+  // result.country = country;
+  // result.printStatus = printStatus;
+  // result.photo = photo;
+
   const updatedResult = await result.save();
 
   return res.json({
