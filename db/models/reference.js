@@ -3,7 +3,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../../config/database");
 
 module.exports = sequelize.define(
-  "enrollments",
+  "references",
   {
     id: {
       allowNull: false,
@@ -26,20 +26,10 @@ module.exports = sequelize.define(
       type: DataTypes.STRING,
     },
   
-    certificateNo: {
-      type: DataTypes.STRING,
-    },
-    codeAlt: {
-      type: DataTypes.STRING,
-   
-    },
     country: {
       type: DataTypes.STRING,
     },
-    courseCode: {
-      type: DataTypes.STRING,
   
-    },
     courseName: {
       type: DataTypes.STRING,
    
@@ -51,19 +41,12 @@ module.exports = sequelize.define(
     email: {
       type: DataTypes.STRING,
     },
-    endDate: {
-      type: DataTypes.STRING,
-    },
-    enrollDate: {
-      type: DataTypes.STRING,
-    },
+  
     firstName: {
       type: DataTypes.STRING,
    
     },
-    fullName: {
-      type: DataTypes.STRING,
-    },
+  
     gender: {
       type: DataTypes.STRING,
   
@@ -72,12 +55,7 @@ module.exports = sequelize.define(
       type: DataTypes.STRING,
    
     },
-    isRenewal: {
-      type: DataTypes.BOOLEAN,
-    },
-    isSignature: {
-      type: DataTypes.BOOLEAN,
-    },
+  
     lastName: {
       type: DataTypes.STRING,
   
@@ -97,25 +75,20 @@ module.exports = sequelize.define(
     middleName: {
       type: DataTypes.STRING,
     },
-    photo: {
+    refNumber: {
       type: DataTypes.STRING,
   
     },
-    printStatus: {
-      type: DataTypes.BOOLEAN,
-    },
-    startDate: {
-      type: DataTypes.STRING,
-    },
+   
     state: {
       type: DataTypes.STRING,
     },
     stateReside: {
       type: DataTypes.STRING,
     },
-    status: {
+    refStatus: {
       type: DataTypes.BOOLEAN,
     },
   },
-  { freezTableName: true, modelName: "enrollments" }
+  { freezTableName: true, modelName: "references" }
 );

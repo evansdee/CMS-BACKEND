@@ -8,7 +8,6 @@ const createEnrollment = catchAsync(async (req, res, next) => {
     firstName,
     middleName,
     address,
-    bank,
     amount,
     status,
     fullName,
@@ -37,13 +36,12 @@ const createEnrollment = catchAsync(async (req, res, next) => {
     photo,
   } = body;
 
-  // const photoURL = `${req.protocol}://${req.get('host')}/uploads/photos/${req.file.filename}`;
+  // const  photoURL = `${req.protocol}://${req.get('host')}/uploads/photos/${req.file.filename}`;
 
   const newEnrollment = await enrollment.create({
     firstName,
     middleName,
     address,
-    bank,
     amount,
     status,
     fullName,

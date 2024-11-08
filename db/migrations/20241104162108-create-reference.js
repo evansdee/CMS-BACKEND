@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('enrollments',
+    await queryInterface.createTable('references',
       {
         id: {
           allowNull: false,
@@ -24,19 +24,11 @@ module.exports = {
         amount: {
           type: Sequelize.STRING,
         },
-     
-        certificateNo: {
-          type: Sequelize.STRING,
-        },
-        codeAlt: {
-          type: Sequelize.STRING,
-        },
+      
         country: {
           type: Sequelize.STRING,
         },
-        courseCode: {
-          type: Sequelize.STRING,
-        },
+      
         courseName: {
           type: Sequelize.STRING,
         },
@@ -46,32 +38,18 @@ module.exports = {
         email: {
           type: Sequelize.STRING,
         },
-        endDate: {
-          type: Sequelize.STRING,
-        },
-        enrollDate: {
-          type: Sequelize.STRING,
-        },
+      
         firstName: {
           type: Sequelize.STRING,
         },
-        fullName: {
-          type: Sequelize.STRING,
-        },
+     
         gender: {
           type: Sequelize.STRING,
         },
         gsm: {
           type: Sequelize.STRING,
         },
-        isRenewal: {
-          type: Sequelize.BOOLEAN,
-          defaultValue: false,
-        },
-        isSignature: {
-          type: Sequelize.BOOLEAN,
-          defaultValue: null,
-        },
+       
         lastName: {
           type: Sequelize.STRING,
         },
@@ -90,15 +68,10 @@ module.exports = {
         middleName: {
           type: Sequelize.STRING,
         },
-        photo: {
+        
+        refNumber:{
           type: Sequelize.STRING,
-        },
-        printStatus: {
-          type: Sequelize.BOOLEAN,
-          defaultValue: false,
-        },
-        startDate: {
-          type: Sequelize.STRING,
+
         },
         state: {
           type: Sequelize.STRING,
@@ -106,7 +79,7 @@ module.exports = {
         stateReside: {
           type: Sequelize.STRING,
         },
-        status: {
+        refStatus: {
           type: Sequelize.BOOLEAN,
           defaultValue: null,
         },
@@ -114,6 +87,6 @@ module.exports = {
       );
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('enrollments');
+    await queryInterface.dropTable('references');
   }
 };

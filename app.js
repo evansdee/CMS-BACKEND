@@ -4,6 +4,7 @@ const path = require('path');
 const express = require('express')
 const fileRouter = require('./route/uploadRoute'); // Update with the correct path
 const authRouter = require('./route/authRoute')
+const referenceRouter = require('./route/referenceRoute')
 const paystackRouter = require('./route/paystackRoute')
 const sessionRouter = require('./route/sessionRoute')
 const courseRouter = require('./route/courseRoute')
@@ -33,6 +34,7 @@ app.use('/api/v1/auth',authRouter)
 app.use('/api/v1/enrollments',enrollmentRouter)
 app.use('/api/v1/sessions',sessionRouter)
 app.use('/api/v1/courses',courseRouter)
+app.use('/api/v1/references',referenceRouter)
 // app.use('/api/v1/upload',courseRouter)
 
 app.use("*",catchAsync(async (req,res,next)=>{

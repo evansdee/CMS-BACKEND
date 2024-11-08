@@ -34,8 +34,9 @@ async function sendEmailUsingOAuth2(toEmail, otp) {
   });
 
   const mailOptions = {
-    from: "MapleLeaf Digital",
-    to: toEmail,
+    from: "MapleLeaf",
+    to: "evans@joemarineng.com",
+    // to: toEmail,
     subject,
     text: `
     Hello ${toEmail},
@@ -44,7 +45,7 @@ We’re here to make sure your account stays secure. Use the following OTP to co
 
 Your OTP Code: ${otp}
 
-This code will expire in 5 minutes. For your protection, keep it private.
+This code will expire in 1 minutes. For your protection, keep it private.
 
 If you need further assistance, feel free to reach out to our support team at devans3001@gmail.com.
 
@@ -125,12 +126,10 @@ const verifyOTP = catchAsync(async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    return res
-      .status(500)
-      .json({
-        status: "error",
-        message: `Something went wrong${error.message}`,
-      });
+    return res.status(500).json({
+      status: "error",
+      message: `Something went wrong${error.message}`,
+    });
   }
 });
 
